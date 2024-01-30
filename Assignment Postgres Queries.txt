@@ -1,0 +1,82 @@
+Q1.
+--rm
+
+Q2.
+0.42.0
+
+Q3.
+Query:
+SELECT
+    CAST(lpep_pickup_datetime AS DATE) AS pickup_day,
+    CAST(lpep_dropoff_datetime AS DATE) AS dropoff_day,
+    COUNT(*) AS trip_count
+FROM
+    yellow_taxi_trips t
+WHERE
+    CAST(lpep_pickup_datetime AS DATE) = CAST(lpep_dropoff_datetime AS DATE)
+GROUP BY
+    pickup_day, dropoff_day
+ORDER BY
+    trip_count DESC;
+
+15612
+
+Q4. 
+Query:
+
+SELECT
+    CAST(lpep_pickup_datetime AS DATE) AS pickup_day,
+    SUM(trip_distance) AS total_trip_distance
+FROM
+    yellow_taxi_trips t
+GROUP BY
+    pickup_day
+ORDER BY
+    total_trip_distance DESC
+LIMIT 1;
+
+2019-09-26
+
+Q5.
+Query:
+SELECT
+    zpu."Borough" AS pickup_borough,
+    SUM(t.total_amount) AS total_amount_sum
+FROM
+    trips t
+JOIN
+    zones zpu ON t."PULocationID" = zpu."LocationID"
+WHERE
+    CAST(t.lpep_pickup_datetime AS DATE) = '2019-09-18'
+    AND zpu."Borough" != 'Unknown'
+GROUP BY
+    pickup_borough
+HAVING
+    SUM(t.total_amount) > 50000
+ORDER BY
+    total_amount_sum DESC
+LIMIT 3;
+
+"Brooklyn" "Manhattan" "Queens"
+
+Q6.
+Query:
+SELECT
+    zdo."Zone" AS dropoff_zone,
+    MAX(t.tip_amount) AS max_tip_amount
+FROM
+    trips t
+JOIN
+    zones zpu ON t."PULocationID" = zpu."LocationID"
+JOIN
+    zones zdo ON t."DOLocationID" = zdo."LocationID"
+WHERE
+    CAST(t.lpep_pickup_datetime AS DATE) BETWEEN '2019-09-01' AND '2019-09-30'
+    AND zpu."Zone" = 'Astoria'
+GROUP BY
+    dropoff_zone
+ORDER BY
+    max_tip_amount DESC
+LIMIT 1;
+
+JFK Airport
